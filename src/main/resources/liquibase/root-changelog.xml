@@ -1,0 +1,20 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <include file="liquibase/users.xml" />
+    <include file="liquibase/audit.xml"/>
+    <include file="liquibase/hotel.xml"/>
+    <include file="liquibase/room_attribute.xml" />
+    <include file="liquibase/room_view_attribute.xml" />
+    <include file="liquibase/room.xml" />
+    <include file="liquibase/room_view.xml"/>
+    <include file="liquibase/scrapped_hotel.xml" />
+    <include file="liquibase/monitor_list.xml" />
+    <include file="liquibase/room_view_price.xml" />
+    <include file="liquibase/views.xml" />
+    <include file="liquibase/bucket.xml" />
+</databaseChangeLog>

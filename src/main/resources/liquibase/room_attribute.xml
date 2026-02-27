@@ -1,0 +1,20 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="Arslan Kalaitsidis">
+        <createTable tableName="hotel_room_attributes">
+            <column name="room_attribute_id" type="bigint" autoIncrement="true"><constraints primaryKey="true" /></column>
+            <column name="attribute_name" type="varchar(255)"><constraints nullable="false" uniqueConstraintName="HOTEL_ROOM_ATTRIBUTES_UNIQUE_NAME" unique="true" /></column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet id="2" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="hotel_room_attributes" file="data/room_attribute.csv"/>
+    </changeSet>
+</databaseChangeLog>

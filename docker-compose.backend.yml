@@ -1,0 +1,60 @@
+name: pricemonitoring-backend
+
+services:
+  mysql:
+    image: mysql:8.0.29
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: price_monitoring
+    ports:
+      - "13306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: price_monitoring
+      RABBITMQ_DEFAULT_PASS: price_monitoring
+      RABBITMQ_DEFAULT_VHOST: vhost
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "15692:15692"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/price_monitoring
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: price_monitoring
+      SPRING_RABBITMQ_PASSWORD: price_monitoring
+      SCRAPPING_SERVER_ADDRESS: http://localhost
+      SCRAPPING_SERVER_PORT: 3001
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

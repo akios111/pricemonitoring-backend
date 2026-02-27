@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender" >
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SCRAPER_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/scrap.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <maxFileSize>100MB</maxFileSize>
+            <fileNamePattern>logs/scrap/%d{yyyy-MM-dd}/scrap.%d{yyyy_MM_dd}.%i.log.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="EMAIL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/email.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <maxFileSize>100MB</maxFileSize>
+            <fileNamePattern>logs/email/%d{yyyy-MM-dd}/email.%d{yyyy_MM_dd}.%i.log.gz</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <maxFileSize>100MB</maxFileSize>
+            <param name="maxFileSize" value="100MB" />
+            <maxHistory>30</maxHistory>
+            <fileNamePattern>logs/application/%d{yyyy-MM-dd}/scrap.%d{yyyy_MM_dd}.%i.log.gz</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="iee.ihu.gr.pricemonitoringbackend.service.email.EmailService">
+        <appender-ref ref="EMAIL_FILE" />
+    </logger>
+
+    <logger name="iee.ihu.gr.pricemonitoringbackend.service.ScrapperResultHandlerImpl">
+        <appender-ref ref="SCRAPER_FILE" />
+    </logger>
+
+    <logger name="iee.ihu.gr.pricemonitoringbackend.service.HttpScrappingService">
+        <appender-ref ref="SCRAPER_FILE" />
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>

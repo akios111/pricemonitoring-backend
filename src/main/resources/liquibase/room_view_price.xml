@@ -1,0 +1,27 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="Arslan Kalaitsidis">
+        <createTable tableName="prices">
+            <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true" /></column>
+            <column name="room_choice_id" type="bigint"><constraints nullable="false" foreignKeyName="FK_PRICES_HOTEL_ROOM_CHOICES" references="hotel_room_choices(id)"/></column>
+            <column name="cancellation_days" type="integer"><constraints nullable="false" /></column>
+            <column name="distance_days" type="integer"><constraints nullable="false"/></column>
+            <column name="price" type="integer"><constraints nullable="false" /></column>
+            <column name="quantity" type="integer"><constraints nullable="false" /></column>
+            <column name="timestamp" type="datetime(6)"><constraints nullable="false" /></column>
+        </createTable>
+
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="2" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="prices" file="data/room_view_price.csv"/>
+    </changeSet>
+</databaseChangeLog>

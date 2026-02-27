@@ -1,0 +1,25 @@
+### Gradle / build outputs
+.gradle/
+build/
+out/
+
+### IntelliJ / Android Studio
+.idea/
+*.iml
+
+### OS
+.DS_Store
+Thumbs.db
+
+### Logs / runtime
+logs/
+*.log
+**/application.pid
+
+### Local env / secrets (never commit)
+.env
+.env.*
+!.env.example
+
+### Docker local volumes (if any are placed here)
+data/

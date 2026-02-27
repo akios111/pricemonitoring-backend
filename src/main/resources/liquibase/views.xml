@@ -1,0 +1,35 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="Arslan Kalaitsidis">
+        <createView viewName="scrappable_hotels">SELECT H.hotel_url FROM hotels H INNER JOIN hotel_seeds HS on H.id = HS.hotel_id WHERE interested_customers > 0</createView>
+    </changeSet>
+
+    <changeSet id="2" author="Arslan Kalaitsidis">
+        <dropView viewName="scrappable_hotels" />
+    </changeSet>
+
+    <changeSet id="3" author="Arslan Kalaitsidis">
+        <dropTable tableName="hotel_seeds" />
+    </changeSet>
+
+    <changeSet id="4" author="Arslan Kalaitsidis">
+        <createView viewName="scrappable_hotels">
+            select h.hotel_url,d.distance_days from distances d inner join monitor_list ml on d.monitor_list_id = ml.id inner join monitor_list_details mld on ml.id = mld.monitor_list_id inner join hotel_rooms r on mld.room_id = r.id inner join hotels h on r.hotel_id = h.id group by h.hotel_url, d.distance_days;
+        </createView>
+    </changeSet>
+
+    <changeSet id="5" author="Arslan Kalaitsidis">
+        <dropView viewName="scrappable_hotels"/>
+    </changeSet>
+
+    <changeSet id="6" author="Arslan Kalaitsidis">
+        <createView viewName="scrappable_hotels">
+            select h.hotel_url as hotel_url,d.distance_days as distance_days from distances d inner join monitor_list ml on d.monitor_list_id = ml.id inner join monitor_list_details mld on ml.id = mld.monitor_list_id inner join hotel_rooms r on mld.room_id = r.id inner join hotels h on r.hotel_id = h.id group by h.hotel_url, d.distance_days;
+        </createView>
+    </changeSet>
+</databaseChangeLog>

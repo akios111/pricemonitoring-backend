@@ -1,0 +1,50 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="Arslan Kalaitsidis">
+        <createTable tableName="users">
+            <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true"/></column>
+            <column name="email" type="varchar(254)" ><constraints nullable="false" unique="true" uniqueConstraintName="USERS_UNIQUE_EMAIL" /></column>
+            <column name="name" type="varchar(45)"><constraints nullable="false"/></column>
+            <column name="password" type="varchar(255)"><constraints nullable="false" /></column>
+        </createTable>
+
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+    
+    <changeSet id="2" author="Arslan Kalaitsidis" context="data">
+        <insert tableName="users">
+            <column name="id">1</column>
+            <column name="email">test@email.com</column>
+            <column name="name">Test User</column>
+            <column name="password">$2a$10$hWUnRQ/OMWJWt8JYKMdHAecGy26mTaS0ZpGmhfeyZx8JjXs.CUEUS</column>
+        </insert>
+    </changeSet>
+    <changeSet id="3" author="Arslan Kalaitsidis" context="data">
+        <update tableName="users">
+            <column name="password" value="$2a$10$TkQeNJsAQs.qXEKxz2p/ZezYQieG4GETtpljLyIglVT2hayC9jo0C"/>
+            <where>id=1</where>
+        </update>
+    </changeSet>
+
+    <changeSet id="4" author="Arslan Kalaitsidis">
+        <addColumn tableName="users">
+            <column name="role" type="varchar(255)" defaultValue="USER">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="5" author="Arslan Kalaitsidis">
+        <update tableName="users">
+            <column name="role">PREMIUM</column>
+            <where>id=1</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

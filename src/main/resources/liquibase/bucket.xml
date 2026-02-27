@@ -1,0 +1,27 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+  
+    <changeSet id="1" author="Arslan Kalaitsidis">
+        <createTable tableName="customer_buckets">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="state" type="blob"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="2" id="Arslan Kalaitsidis">
+        <createTable tableName="ip_buckets">
+            <column name="id" type="varchar(255)">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="state" type="blob" />
+        </createTable>
+    </changeSet>
+    
+</databaseChangeLog>

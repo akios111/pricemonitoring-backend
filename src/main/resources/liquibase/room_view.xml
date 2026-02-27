@@ -1,0 +1,94 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="Arslan Kalaitsidis">
+        <createTable tableName="hotel_room_choices">
+            <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true" /></column>
+            <column name="hotel_room_id" type="bigint">
+                <constraints nullable="false" uniqueConstraintName="ROOM_CHOICE_UNIQUE_KEY" unique="true" foreignKeyName="fk_hotel_room_choices_hotel_rooms" references="hotel_rooms(id)" />
+            </column>
+            <column name="sleeps" type="tinyint"><constraints nullable="false"  uniqueConstraintName="ROOM_CHOICE_UNIQUE_KEY" unique="true"/></column>
+            <column name="breakfast" type="varchar(255)"><constraints nullable="false"  uniqueConstraintName="ROOM_CHOICE_UNIQUE_KEY" unique="true" /></column>
+            <column name="cancellation_policy" type="enum ('FREE_CANCELLATION','NON_REFUNDABLE','PARTIALLY_REFUNDABLE','REFUNDABLE','UNKNOWN')"><constraints nullable="false"  uniqueConstraintName="ROOM_CHOICE_UNIQUE_KEY" unique="true"/></column>
+            <column name="started_on" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP" ><constraints nullable="false"/></column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet id="2" author="Arslan Kalaitsidis">
+        <createTable tableName="hotel_room_choices_AUD">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="REV" type="integer">
+                <constraints primaryKey="true" foreignKeyName="HOTEL_ROOM_CHOICES_AUD_REV_REV_REVINFO" references="REVINFO(REV)" />
+            </column>
+            <column name="REVEND" type="integer">
+                <constraints foreignKeyName="HOTEL_ROOM_CHOICES_AUD_REVEND_REV_REVINFO" references="REVINFO(REV)"  />
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+    
+    <changeSet id="3" author="Arslan Kalaitsidis">
+        <createTable tableName="hotel_room_choices_owned_attributes">
+            <column name="hotel_room_choice_id" type="bigint">
+                <constraints primaryKey="true" foreignKeyName="FK_HOTEL_ROOM_CHOICES_OWNED_ATTR_HOTEL_ROOM_CHOICES" references="hotel_room_choices(id)"/>
+            </column>
+            <column name="room_choice_attribute_id" type="bigint">
+                <constraints primaryKey="true" foreignKeyName="FK_HOTEL_ROOM_CHOICES_OWNED_ATTR_ROOM_CHOICES_ATTRIBUTES" references="room_choice_attributes(room_choice_attribute_id)" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4" author="Arslan Kalaitsidis">
+        <sql dbms="mysql">alter table  hotel_room_choices_owned_attributes convert to character set utf8mb3 collate utf8_unicode_520_ci;</sql>
+    </changeSet>
+
+    <changeSet id="5" author="Arslan Kalaitsidis">
+        <createTable tableName="hotel_room_choices_owned_attributes_AUD">
+            <column name="REV" type="integer"><constraints primaryKey="true" foreignKeyName="FK_HOTEL_ROOM_CHOICES_OWNED_ATTR_REV_REVINFO" references="REVINFO(REV)" /></column>
+            <column name="hotel_room_choice_id" type="bigint"><constraints primaryKey="true"/></column>
+            <column name="room_choice_attribute_id" type="bigint"><constraints primaryKey="true" /></column>
+            <column name="REVEND" type="integer"><constraints foreignKeyName="FK_HOTEL_ROOM_CHOICES_OWNED_ATTR_REVEND_REVINFO" references="REVINFO(REV)" /></column>
+            <column name="REVTYPE" type="tinyint"/>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet id="6" author="Arslan Kalaitsidis">
+        <addForeignKeyConstraint baseTableName="hotel_room_choices_owned_attributes_AUD" baseColumnNames="hotel_room_choice_id,room_choice_attribute_id"
+                                 constraintName="HOTEL_ROOM_CHOICES_OWNED_ATTR_AUD_HOTEL_ROOM_CHOICES_OWNED_ATTR" referencedTableName="hotel_room_choices_owned_attributes"
+                                 referencedColumnNames="hotel_room_choice_id,room_choice_attribute_id" />
+    </changeSet>
+
+    <changeSet id="7" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="hotel_room_choices" file="data/hotel_room_choices.csv"/>
+    </changeSet>
+
+    <changeSet id="8" author="Arslan Kalaitsidis">
+        <dropForeignKeyConstraint baseTableName="hotel_room_choices_owned_attributes_AUD" constraintName="HOTEL_ROOM_CHOICES_OWNED_ATTR_AUD_HOTEL_ROOM_CHOICES_OWNED_ATTR"/>
+    </changeSet>
+
+    <changeSet id="9" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="hotel_room_choices_AUD" file="data/hotel_room_choices_aud.csv"/>
+    </changeSet>
+
+    <changeSet id="10" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="hotel_room_choices_owned_attributes" file="data/hotel_room_choices_owned_attributes.csv"/>
+    </changeSet>
+
+    <changeSet id="11" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="hotel_room_choices_owned_attributes_AUD" file="data/hotel_room_choices_owned_attributes_aud.csv"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,102 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="Arslan Kalaitsidis">
+        <createTable tableName="hotel_rooms">
+            <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true"/></column>
+            <column name="hotel_id" type="bigint"><constraints nullable="false" foreignKeyName="fk_hotel_rooms_hotels" references="hotels(id)" /></column>
+            <column name="hotel_room_description" type="varchar(1000)"><constraints nullable="false"/></column>
+            <column name="hotel_room_name" type="varchar(255)"><constraints nullable="false"/></column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet id="2" author="Arslan Kalaitsidis">
+        <addUniqueConstraint tableName="hotel_rooms" columnNames="hotel_room_name,hotel_id" constraintName="HOTEL_ROOMS_UNIQUE_NAME_PER_HOTEL" />
+    </changeSet>
+    <changeSet id="3" author="Arslan Kalaitsidis">
+        <createTable tableName="hotel_rooms_AUD">
+            <column name="id" type="bigint"><constraints primaryKey="true" foreignKeyName="HOTEL_ROOMS_AUD_HOTEL_ROOMS" references="hotel_rooms(id)" /></column>
+            <column name="REV" type="integer"><constraints nullable="false" primaryKey="true" foreignKeyName="HOTEL_ROOMS_AUD_REV_REV" references="REVINFO(REV)" /></column>
+            <column name="REVEND" type="integer" ><constraints nullable="false" primaryKey="true" foreignKeyName="HOTEL_ROOMS_AUD_REVEND_REV" references="REVINFO(REV)" /> </column>
+            <column name="REVTYPE" type="tinyint" />
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet id="4" author="Arslan Kalaitsidis">
+        <dropForeignKeyConstraint baseTableName="hotel_rooms_AUD" constraintName="HOTEL_ROOMS_AUD_HOTEL_ROOMS"/>
+        <dropPrimaryKey tableName="hotel_rooms_AUD"/>
+        <addPrimaryKey tableName="hotel_rooms_AUD" columnNames="REV,id"/>
+        <addForeignKeyConstraint baseTableName="hotel_rooms_AUD" baseColumnNames="id" constraintName="HOTEL_ROOMS_AUD_HOTEL_ROOMS" referencedTableName="hotel_rooms" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet id="5" author="Arslan Kalaitsidis">
+        <createTable tableName="hotel_rooms_owned_attributes">
+            <column name="hotel_room_id" type="bigint"><constraints primaryKey="true" foreignKeyName="FK_HOTEL_ROOMS_OWNED_ATTR_HOTEL_ROOMS" references="hotel_rooms(id)" /></column>
+            <column name="room_attribute_id" type="bigint"><constraints primaryKey="true" foreignKeyName="FK_HOTEL_ROOMS_OWNED_ATTR_HOTEL_ROOM_ATTRIBUTES" references="hotel_room_attributes(room_attribute_id)" /></column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet id="6" author="Arslan Kalaitsidis">
+        <createTable tableName="hotel_rooms_owned_attributes_AUD">
+            <column name="REV" type="integer"><constraints primaryKey="true" foreignKeyName="FK_HOTEL_ROOMS_OWNED_ATTR_AUD_REV_REVINFO" references="REVINFO(REV)" /></column>
+            <column name="REVEND" type="integer"><constraints foreignKeyName="FK_HOTEL_ROOMS_OWNED_ATTR_AUD_REVEND_REVINFO" references="REVINFO(REV)" /></column>
+            <column name="hotel_room_id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="room_attribute_id" type="bigint">
+                <constraints primaryKey="true" />
+            </column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet id="7" author="Arslan Kalaitsidis">
+        <addForeignKeyConstraint baseTableName="hotel_rooms_owned_attributes_AUD" baseColumnNames="hotel_room_id,room_attribute_id" constraintName="FK_HOTEL_ROOMS_OWNED_ATTR_AUD"
+                                 referencedTableName="hotel_rooms_owned_attributes"
+                                 referencedColumnNames="hotel_room_id,room_attribute_id" />
+    </changeSet>
+    <changeSet id="8" author="Arslan Kalaitsidis">
+        <addColumn tableName="hotel_rooms_owned_attributes_AUD">
+            <column name="REVTYPE" type="tinyint" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="9" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="hotel_rooms" file="data/hotel_rooms.csv"/>
+    </changeSet>
+
+    <changeSet id="10" author="Arslan Kalaitsidis">
+        <dropNotNullConstraint tableName="hotel_rooms_AUD" columnName="REVEND" columnDataType="integer"/>
+    </changeSet>
+
+    <changeSet id="11" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="hotel_rooms_AUD" file="data/hotel_rooms_aud.csv"/>
+    </changeSet>
+
+    <changeSet id="12" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="hotel_rooms_owned_attributes" file="data/hotel_rooms_owned_attributes.csv" />
+    </changeSet>
+
+    <changeSet id="13" author="Arslan Kalaitsidis">
+        <dropForeignKeyConstraint baseTableName="hotel_rooms_owned_attributes_AUD" constraintName="FK_HOTEL_ROOMS_OWNED_ATTR_AUD" />
+    </changeSet>
+
+    <changeSet id="14" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="hotel_rooms_owned_attributes_AUD" file="data/hotel_rooms_owned_attributes_aud.csv" />
+    </changeSet>
+
+    <changeSet id="15" author="Arslan Kalaitsidis">
+        <dropForeignKeyConstraint baseTableName="hotel_rooms_AUD" constraintName="HOTEL_ROOMS_AUD_HOTEL_ROOMS" />
+    </changeSet>
+
+</databaseChangeLog>

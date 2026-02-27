@@ -1,0 +1,68 @@
+services:
+  mysql:
+    image: mysql:8.0.29
+    ports:
+      - "13306:3306"
+    expose:
+      - 3306
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+      - "MYSQL_DATABASE=price_monitoring"
+    volumes:
+      - "${PWD}/data.sql:/data.sql"
+    network_mode:
+      bridge
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_PASS: price_monitoring
+      RABBITMQ_DEFAULT_USER: price_monitoring
+      RABBITMQ_DEFAULT_VHOST: 'vhost'
+    ports:
+      - 5672:5672
+      - 15672:15672
+      - 15692:15692
+    network_mode:
+      bridge
+  prometheus:
+    image: bitnami/prometheus:latest
+    volumes:
+      - ${PWD}/prometheus.yml:/opt/bitnami/prometheus/conf/prometheus.yml
+    network_mode:
+      bridge
+    expose:
+      - 9090
+    ports:
+      - "9090:9090"
+  grafana:
+    image: grafana/grafana:latest
+    network_mode:
+        bridge
+    expose:
+      - 3000
+    ports:
+      - "3000:3000"
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - 3100:3100
+    network_mode:
+      bridge
+  server-scrapper:
+    depends_on:
+      - rabbitmq
+      - loki
+    build:
+      context: ../PriceMonitoringScrapper/scrapper
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3001:3001
+      - 3002:3002
+    environment:
+      SERVICE_TYPE: server
+      PORT: 3001
+      RABBIT_MQ_HOST: amqp://price_monitoring:price_monitoring@rabbitmq:5672/vhost
+      LOKI_HOST: http://172.17.0.1:3100
+    network_mode:
+      bridge
+    restart: always

@@ -1,0 +1,24 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="Arslan Kalaitsidis">
+        <createTable tableName="hotel_seeds">
+            <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true" /></column>
+            <column name="hotel_id" type="bigint"><constraints nullable="false" unique="true" foreignKeyName="FK_HOTEL_SEEDS_HOTELS" references="hotels(id)" /></column>
+            <column name="interested_customers" type="integer"><constraints nullable="false" /></column>
+            <column name="last_time_scrapped" type="datetime" defaultValue="null" />
+        </createTable>
+
+        <modifySql dbms="mysql" >
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="2" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="hotel_seeds" file="data/scrapped_hotel.csv"/>
+    </changeSet>
+</databaseChangeLog>

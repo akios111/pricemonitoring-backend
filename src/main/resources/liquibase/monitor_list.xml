@@ -1,0 +1,80 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="Arslan Kalaitsidis">
+        <createTable tableName="monitor_list">
+            <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true" /></column>
+            <column name="user_id" type="bigint"> <constraints nullable="false" unique="true" uniqueConstraintName="MONITOR_LISTS_UNIQUE_NAME_PER_OWNER" foreignKeyName="FK_MONITOR_LISTS_USERS" references="users(id)" /> </column>
+            <column name="monitor_list_name" type="varchar(45)"><constraints unique="true" uniqueConstraintName="MONITOR_LISTS_UNIQUE_NAME_PER_OWNER" nullable="false"/></column>
+            <column name="status" type="enum ('ACTIVE','INACTIVE')"><constraints nullable="false" /></column>
+            <column name="creation_date date" type="date"><constraints nullable="false"/> </column>
+            <column name="monitoring_type" type="varchar(15)" />
+        </createTable>
+
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+    
+    <changeSet id="2" author="Arslan Kalaitsidis">
+        <renameColumn tableName="monitor_list" oldColumnName="creation_date date" newColumnName="creation_date" columnDataType="date"/>
+    </changeSet>
+    
+    <changeSet id="3" author="Arslan Kalaitsidis">
+        <createTable tableName="monitor_list_details">
+            <column name="monitor_list_id" type="bigint"><constraints primaryKey="true" foreignKeyName="FK_MONITOR_LIST_DETAILS_MONITOR_LIST" references="monitor_list(id)" /></column>
+            <column name="room_id" type="bigint"><constraints primaryKey="true" foreignKeyName="FK_MONITOR_LIST_DETAILS_HOTEL_ROOMS" references="hotel_rooms(id)"/></column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value="ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_unicode_520_ci"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="4" author="Arslan Kalaitsidis" context="data">
+        <insert tableName="monitor_list">
+            <column name="creation_date">2023-10-07</column>
+            <column name="id">1</column>
+            <column name="user_id">1</column>
+            <column name="monitoring_type">null</column>
+            <column name="monitor_list_name">MyOlympiadaApartments</column>
+            <column name="status">ACTIVE</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="5" author="Arslan Kalaitsidis" context="data">
+        <loadData tableName="monitor_list_details" file="data/monitor_list_details.csv"/>
+    </changeSet>
+
+    <changeSet id="6" author="Arslan Kalaitsidis">
+        <createTable tableName="distances">
+            <column name="monitor_list_id" type="bigint">
+                <constraints primaryKey="true" foreignKeyName="fk_distance_days_monitor_list" references="monitor_list(id)" />
+            </column>
+            <column name="distance_days" type="integer">
+                <constraints primaryKey="true" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="7" author="Arslan Kalaitsidis" context="data">
+        <insert tableName="distances">
+            <column name="monitor_list_id">1</column>
+            <column name="distance_days">7</column>
+        </insert>
+        <insert tableName="distances">
+            <column name="monitor_list_id">1</column>
+            <column name="distance_days">30</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="8" author="Arslan Kalaitsidis">
+        <update tableName="distances">
+            <column name="distance_days">31</column>
+            <where>distance_days=30</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>
