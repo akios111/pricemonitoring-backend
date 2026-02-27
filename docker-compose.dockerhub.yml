@@ -42,6 +42,8 @@ services:
     ports:
       - "8085:8085"
     environment:
+      # Use "dev" for local testing without real emails.
+      # Use "dev,default" to enable SendGrid emails (requires SEND_GRID_API_KEY).
       SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/price_monitoring
       SPRING_DATASOURCE_USERNAME: root
@@ -52,6 +54,9 @@ services:
       SPRING_RABBITMQ_PASSWORD: price_monitoring
       SCRAPPING_SERVER_ADDRESS: http://localhost
       SCRAPPING_SERVER_PORT: 3001
+      # Optional (only needed if using default profile / SendGrid)
+      SEND_GRID_API_KEY: ${SEND_GRID_API_KEY:-}
+      SEND_GRID_FROM: ${SEND_GRID_FROM:-}
     restart: unless-stopped
 
 volumes:

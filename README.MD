@@ -37,6 +37,21 @@ docker compose -f docker-compose.backend.yml down -v
 ### Notes about email verification (dev profile)
 When running with `SPRING_PROFILES_ACTIVE=dev`, the backend uses a no-op email service. The verification JWT is **logged** by the backend instead of being sent via email.
 
+### Enable real email sending (SendGrid)
+Use profiles `dev,default` and provide a SendGrid API key:
+
+```bash
+# Docker Hub compose (no build)
+set SEND_GRID_API_KEY=YOUR_KEY
+docker compose -f docker-compose.dockerhub.yml up -d
+```
+
+Then change in `docker-compose.dockerhub.yml`:
+- `SPRING_PROFILES_ACTIVE: dev,default`
+
+Important:
+- The `send.grid.from` address must be **verified** in your SendGrid account (you can override it with `SEND_GRID_FROM`).
+
 ## Existing full stack compose
 This repository also contains a larger `docker-compose.yml` with extra services (grafana/prometheus/loki/scrapper). Use it only if you need the whole stack.
 
