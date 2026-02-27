@@ -11,6 +11,11 @@ From the `PriceMonitoringBackend` folder:
 docker compose -f docker-compose.backend.yml up -d --build
 ```
 
+### Run from Docker Hub (no local build)
+```bash
+docker compose -f docker-compose.dockerhub.yml up -d
+```
+
 Check it's up:
 
 ```bash
